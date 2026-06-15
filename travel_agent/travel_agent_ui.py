@@ -17,30 +17,9 @@ st.set_page_config(page_title="Travel Agent", page_icon="✈️", layout="wide")
 
 st.markdown("""
 <style>
-    .stApp {
-        background-color: #0f172a;
-        color: white;
-    }
-    [data-testid="stSidebar"] {
-        background-color: #1e293b;
-    }
-    .quick-btn {
-        background-color: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 10px;
-        padding: 12px;
-        color: white;
-        text-align: center;
-        font-size: 14px;
-    }
-    .stChatMessage {
-        background-color: #1e293b;
-        border-radius: 10px;
-        padding: 10px;
-    }
-    h1 {
-        color: #38bdf8;
-    }
+    .stApp { background-color: #0f172a; color: white; }
+    [data-testid="stSidebar"] { background-color: #1e293b; }
+    h1 { color: #38bdf8; }
     .stButton > button {
         background-color: #1e40af;
         color: white;
@@ -50,14 +29,11 @@ st.markdown("""
         padding: 12px;
         font-size: 14px;
     }
-    .stButton > button:hover {
-        background-color: #2563eb;
-        color: white;
-    }
+    .stButton > button:hover { background-color: #2563eb; color: white; }
 </style>
 """, unsafe_allow_html=True)
 
-API_KEY = os.environ.get("GROQ_API_KEY", "")
+API_KEY = st.secrets["GROQ_API_KEY"]
 MEMORY_FILE = "travel_memory.json"
 
 def load_memory():
@@ -94,22 +70,33 @@ def weather(city: str):
 @tool
 def travelling_train(fromcity: str, tocity: str, date: str, persons: str):
     """Search trains between two cities."""
-    return f"TRAIN ROUTE LOG: Searching trains from {fromcity} to {tocity} for {date}. Use DuckDuckGoSearchRun to find live prices."
+    return f"Use DuckDuckGoSearchRun to find current train prices from {fromcity} to {tocity} for {persons} persons on {date}."
 
 @tool
 def travelling_flight(fromcity: str, tocity: str, date: str, persons: str):
     """Search flights between two cities."""
-    return f"FLIGHT ROUTE LOG: Searching flights from {fromcity} to {tocity} for {date}. Use DuckDuckGoSearchRun to find live prices."
+    return f"Use DuckDuckGoSearchRun to find current flight prices from {fromcity} to {tocity} for {persons} persons on {date}."
 
 @tool
 def hotel(tocity: str, budget: str, days: str):
-    """Search hotels in a city."""
-    return f"Searching hotels in {tocity} for {days} days with budget {budget}. Check booking.com or makemytrip.com."
+    """Search hotels in a city based on budget and days"""
+    return f"Use DuckDuckGoSearchRun to find top 3 hotels in {tocity} for {days} days within {budget} budget. Show hotel name, price and rating."
 
 @tool
 def itinerary(tocity: str, days: str, budget: str):
-    """Generate a travel plan."""
-    return f"Generate a {days}-day itinerary for {tocity} with budget {budget}."
+    """Generate a day by day travel plan for a city."""
+    return f"Generate a detailed {days}-day itinerary for {tocity} with budget {budget}."
+
+SYSTEM_MESSAGE = """You are a helpful world-class travel agent assistant.
+
+STRICT RULES:
+1. ALWAYS use DuckDuckGoSearchRun to search for real prices.
+2. NEVER show raw function calls or JSON to the user.
+3. Always show final answer in plain simple English.
+4. For hotels always search and list top 3 hotels with name and price.
+5. Give realistic prices only.
+6. Flag impossible routes like train from India to Norway.
+"""
 
 @st.cache_resource
 def get_agent():
@@ -117,13 +104,6 @@ def get_agent():
     web_search = DuckDuckGoSearchRun()
     tools = [weather, travelling_train, travelling_flight, hotel, itinerary, web_search]
     return create_react_agent(llm, tools)
-
-SYSTEM_MESSAGE = """You are a helpful travel agent assistant.
-1. Use tools for every travel query.
-2. Use DuckDuckGoSearchRun to find live prices after calling flight or train tools.
-3. Give realistic prices only.
-4. Flag impossible routes like train from India to Norway.
-"""
 
 if "chat_history" not in st.session_state:
     history = load_memory()
@@ -159,23 +139,20 @@ st.markdown("# ✈️ Travel Agent")
 st.markdown("Your smart travel planning assistant — flights, trains, hotels and more.")
 st.markdown("---")
 
-st.markdown("### 💡 Try these quick questions:")
+st.markdown("### 💡 Try these:")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     if st.button("🌤️ Weather in Chennai"):
         st.session_state.prefill = "What is the current weather in Chennai?"
-
 with col2:
-    if st.button("🗺️ Plan trip to Norway\nfor 10 days"):
+    if st.button("🗺️ Plan trip to Norway for 10 days"):
         st.session_state.prefill = "Plan a 10 day trip to Norway with full itinerary"
-
 with col3:
-    if st.button("🚆 Train price\nChennai to Delhi"):
+    if st.button("🚆 Train price Chennai to Delhi"):
         st.session_state.prefill = "What is the current train price from Chennai to Delhi?"
-
 with col4:
-    if st.button("✈️ Flight price\nMumbai to Bangkok"):
+    if st.button("✈️ Flight price Mumbai to Bangkok"):
         st.session_state.prefill = "What is the current flight price from Mumbai to Bangkok?"
 
 st.markdown("---")
