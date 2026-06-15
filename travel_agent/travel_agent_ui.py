@@ -102,7 +102,7 @@ RULES:
 8. For hotels search: "best hotels in X with price"
 """
 
-# STREAMLIT
+# LLM AND TOOL CALLING
 @st.cache_resource
 def get_agent():
     llm = ChatGroq(api_key=API_KEY, model="llama-3.3-70b-versatile")
@@ -137,7 +137,7 @@ with st.sidebar:
         st.session_state.prefill = ""
         st.rerun()
     st.markdown("---")
-    st.caption("Built with LangGraph + Groq + Streamlit")
+    st.caption("Built with LangGraph + Groq + Streamlit + LLM + Memory")
 
 st.markdown("# ✈️ Travel Agent")
 st.markdown("Your smart travel planning assistant — flights, trains, hotels and more.")
@@ -148,7 +148,7 @@ col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     if st.button("🌤️ Weather in Chennai"):
-        st.session_state.prefill = "What is the current weather in Chennai?"
+        st.session_state.prefill = "What is the current weather in New York?"
 with col2:
     if st.button("🗺️ Plan trip to Norway for 10 days"):
         st.session_state.prefill = "Plan a 10 day trip to Norway with full itinerary"
