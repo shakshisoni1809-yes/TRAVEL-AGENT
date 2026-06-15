@@ -13,7 +13,7 @@ from langchain_core.messages import (
 from langgraph.prebuilt import create_react_agent
 from langchain_community.tools import DuckDuckGoSearchRun
 
-st.set_page_config(page_title="AI Travel Agent", page_icon="✈️", layout="wide")
+st.set_page_config(page_title="Travel Agent", page_icon="✈️", layout="wide")
 
 st.markdown("""
 <style>
@@ -155,7 +155,7 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Built with LangGraph + Groq + Streamlit")
 
-st.markdown("# ✈️ AI Travel Agent")
+st.markdown("# ✈️ Travel Agent")
 st.markdown("Your smart travel planning assistant — flights, trains, hotels and more.")
 st.markdown("---")
 
