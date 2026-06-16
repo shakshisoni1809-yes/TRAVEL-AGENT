@@ -107,9 +107,8 @@ streamlit run app.py
 
 ```env
 LLM_API_KEY=your_llm_api_key
-FLIGHT_API_KEY=your_flight_api_key
 WEATHER_API_KEY=your_weather_api_key
-TRAIN_API_KEY=your_train_api_key
+
 ```
 
 ---
