@@ -89,7 +89,7 @@ pip
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/yourusername/ai-travel-agent.git
+git clone https://github.com/shakshi-soni/TRAVEL-AGENT.git
 cd ai-travel-agent
 
 # 2. Install dependencies
